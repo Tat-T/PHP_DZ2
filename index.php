@@ -1,5 +1,6 @@
 <?php
 $filename = "countries.csv";
+include "header.php";
 
 // Создание файла, если он не существует
 if (!file_exists($filename)) {
@@ -26,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         if (!in_array($country, $countries)) {
             $file = fopen($filename, "a");
-            fputcsv($file, [$country]);
+            fputcsv($file, [$country], ",", '"', "\\");
             fclose($file);
         }
     }
@@ -34,17 +35,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 $countries = getCountries($filename);
 ?>
-
-    <form method="POST">
-        <input type="text" name="country" placeholder="Введите название страны" required>
-        <button type="submit">Добавить</button>
-    </form>
-    
-    <?php if (!empty($countries)): ?>
-        <label for="countries">Выберите страну:</label>
-        <select id="countries">
-            <?php foreach ($countries as $c): ?>
-                <option value="<?php echo htmlspecialchars($c); ?>"><?php echo htmlspecialchars($c); ?></option>
-            <?php endforeach; ?>
-        </select>
-    <?php endif; ?>
+<div class="container">
+        <div class="row mt-5">
+            <div class="col-md-6 offset-md-3">
+                <form method="POST">
+                    <div class="form-group d-flex align-items-center">
+                        <input type="text" class="form-control" name="country" placeholder="Введите название страны" required>
+                    </div>
+                        <button type="submit"  class="form-control btn btn-success mt-3 text-center">Добавить</button>
+                </form>
+                <?php if (!empty($countries)): ?>
+                    <div class="form-group d-flex align-items-center">
+                        <label for="countries">Выберите страну:</label>
+                    </div>
+                    <select id="countries">
+                        <?php foreach ($countries as $c): ?>
+                            <option value="<?php echo htmlspecialchars($c); ?>"><?php echo htmlspecialchars($c); ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                <?php endif; ?>
+            </div>
+        </div>
+</div>
+<?php
+include "footer.php";
+?>
