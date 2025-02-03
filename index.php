@@ -1,10 +1,14 @@
 <?php
 $filename = "countries.csv";
+$dictionaryFile = "dictionary.csv";
 include "header.php";
 
 // Создание файла, если он не существует
 if (!file_exists($filename)) {
     file_put_contents($filename, "");
+}
+if (!file_exists($dictionaryFile)) {
+    file_put_contents($dictionaryFile, "");
 }
 
 // Функция для чтения стран из файла
@@ -19,10 +23,24 @@ function getCountries($filename) {
     return $countries;
 }
 
+// Функция для чтения эталонных стран
+function getDictionary($dictionaryFile) {
+    $dictionary = [];
+    if (($handle = fopen($dictionaryFile, "r")) !== FALSE) {
+        while (($data = fgetcsv($handle, 1000, ",", '"', "\\")) !== FALSE) {
+            $dictionary[] = $data[0];
+        }
+        fclose($handle);
+    }
+    return $dictionary;
+}
+
+$dictionary = getDictionary($dictionaryFile);
+
 // Обработка отправки формы
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $country = trim($_POST["country"]);
-    if (!empty($country)) {
+    if (!empty($country) && in_array($country, $dictionary)) {
         $countries = getCountries($filename);
         
         if (!in_array($country, $countries)) {
